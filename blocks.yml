@@ -6,12 +6,31 @@ defineInterface:
   properties:
   - key: inputSlotCount
     type: integer
+    default: 0
   - key: outputSlotCount
     type: integer
+    default: 0
+  - key: inputTankCount
+    type: integer
+    default: 0
+  - key: outputTankCount
+    type: integer
+    default: 0
+  - key: innerTankCapacity
+    type: number
+    default: 0
 - interfaceName: IChestParam
   properties:
   - key: itemSlotCount
     type: integer
+- interfaceName: IGearMachineParam
+  properties:
+  - key: requireTorque
+    type: number
+    default: 1
+  - key: requiredRpm
+    type: number
+    default: 5
 properties:
 - key: data
   type: array
@@ -38,6 +57,7 @@ properties:
       - Shaft
       - GearMachine
       - SimpleGearGenerator
+      - SteamGearGenerator
       - GearBeltConveyor
       - GearMiner
       - GearMapObjectMiner
@@ -52,15 +72,10 @@ properties:
       - FluidPipe
     - key: itemGuid
       type: uuid
-      foreignKey: 
+      foreignKey:
         schemaId: items
-        # [*] はドロップダウンになるため不明になる要素。複数は現状サポートしなくてもいいけど、サポートするんだったら
-        # アイテムA > サブ要素1
-        # アイテムA > サブ要素2
-        # アイテムB > サブ要素1
-        # みたいにドロップダウンで表示するのが良いかも
-        foreignKeyIdPath: "/data/[*]/itemGuid"
-        displayElementPath: "/data/[*]/name"
+        foreignKeyIdPath: /data/[*]/itemGuid
+        displayElementPath: /data/[*]/name
     - key: blockSize
       type: vector3Int
       default:
@@ -74,7 +89,7 @@ properties:
       type: string
       optional: true
     - key: blockParam
-      switch: "./blockType"
+      switch: ./blockType
       cases:
       - when: Block
         type: object
@@ -111,17 +126,28 @@ properties:
         implementationInterface:
         - IMachineParam
         properties:
+        - key: requiredPower
+          type: number
+          default: 5
         - key: inputSlotCount
           type: integer
           default: 1
         - key: outputSlotCount
           type: integer
           default: 1
-        - key: requiredPower
-          type: number
-          default: 5
         - key: inventoryConnectors
           ref: inventoryConnects
+        - key: inputTankCount
+          type: integer
+          default: 0
+        - key: outputTankCount
+          type: integer
+          default: 0
+        - key: innerTankCapacity
+          type: number
+          default: 0
+        - key: fluidInventoryConnectors
+          ref: fluidInventoryConnects
       - when: ElectricPole
         type: object
         properties:
@@ -153,8 +179,8 @@ properties:
               type: uuid
               foreignKey:
                 schemaId: items
-                foreignKeyIdPath: "/data/[*]/itemGuid"
-                displayElementPath: "/data/[*]/name"
+                foreignKeyIdPath: /data/[*]/itemGuid
+                displayElementPath: /data/[*]/name
             - key: time
               type: number
               default: 1
@@ -199,6 +225,7 @@ properties:
         type: object
         implementationInterface:
         - IMachineParam
+        - IGearMachineParam
         properties:
         - key: inputSlotCount
           type: integer
@@ -206,6 +233,8 @@ properties:
         - key: outputSlotCount
           type: integer
           default: 1
+        - key: inventoryConnectors
+          ref: inventoryConnects
         - key: teethCount
           type: integer
           default: 10
@@ -215,10 +244,19 @@ properties:
         - key: requiredRpm
           type: number
           default: 5
-        - key: inventoryConnectors
-          ref: inventoryConnects
         - key: gear
           ref: gear
+        - key: inputTankCount
+          type: integer
+          default: 0
+        - key: outputTankCount
+          type: integer
+          default: 0
+        - key: innerTankCapacity
+          type: number
+          default: 0
+        - key: fluidInventoryConnectors
+          ref: fluidInventoryConnects
       - when: SimpleGearGenerator
         type: object
         properties:
@@ -231,11 +269,60 @@ properties:
         - key: generateTorque
           type: number
           default: 1
-        - key: requireTorque
-          type: number
-          default: 1
         - key: gear
           ref: gear
+      - when: SteamGearGenerator
+        type: object
+        properties:
+        - key: teethCount
+          type: integer
+          default: 10
+        - key: generateMaxRpm
+          type: number
+          default: 5
+        - key: generateMaxTorque
+          type: number
+          default: 1
+        - key: timeToMax
+          type: number
+          default: 30
+        - key: timeToMaxEasing
+          type: enum
+          options:
+          - Linear
+          - EaseInSine
+          - EaseOutSine
+          - EaseInCubic
+          - EaseOutCubic
+          - EaseInQuint
+          - EaseOutQuint
+          - EaseInCirc
+          - EaseOutCirc
+          default: EaseInSine
+        - key: gear
+          ref: gear
+        - key: fluidCapacity
+          type: number
+          default: 100
+        - key: requiredFluids
+          type: array
+          items:
+            type: object
+            properties:
+            - key: fluidGuid
+              type: uuid
+              foreignKey:
+                schemaId: fluids
+                foreignKeyIdPath: /data/[*]/fluidGuid
+                displayElementPath: /data/[*]/name
+            - key: amount
+              type: number
+              default: 1
+            - key: consumptionTime
+              type: number
+              default: 1
+        - key: fluidInventoryConnectors
+          ref: fluidInventoryConnects
       - when: GearBeltConveyor
         type: object
         properties:
@@ -283,6 +370,8 @@ properties:
           ref: inventoryConnects
       - when: GearMiner
         type: object
+        implementationInterface:
+        - IGearMachineParam
         properties:
         - key: teethCount
           type: integer
@@ -306,6 +395,7 @@ properties:
         type: object
         implementationInterface:
         - IChestParam
+        - IGearMachineParam
         properties:
         - key: teethCount
           type: integer
@@ -383,6 +473,8 @@ properties:
         - key: stationDistance
           type: integer
           default: 5
+        - key: itemSlotCount
+          type: integer
         - key: inventoryConnectors
           ref: inventoryConnects
       - when: TrainCargoPlatform
@@ -418,17 +510,20 @@ properties:
         type: uuid
         foreignKey:
           schemaId: blocks
-          foreignKeyIdPath: "/data/[*]/blockGuid"
-          displayElementPath: "/data/[*]/name"
+          foreignKeyIdPath: /data/[*]/blockGuid
+          displayElementPath: /data/[*]/name
+        optional: true
       - key: horizontalBlockGuid
         type: uuid
         foreignKey:
           schemaId: blocks
-          foreignKeyIdPath: "/data/[*]/blockGuid"
-          displayElementPath: "/data/[*]/name"
+          foreignKeyIdPath: /data/[*]/blockGuid
+          displayElementPath: /data/[*]/name
+        optional: true
       - key: downBlockGuid
         type: uuid
         foreignKey:
           schemaId: blocks
-          foreignKeyIdPath: "/data/[*]/blockGuid"
-          displayElementPath: "/data/[*]/name"
+          foreignKeyIdPath: /data/[*]/blockGuid
+          displayElementPath: /data/[*]/name
+        optional: true

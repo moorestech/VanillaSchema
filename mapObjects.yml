@@ -23,7 +23,7 @@ properties:
       - 0
       items:
         type: integer
-    - key: soundEffectTyp
+    - key: soundEffectType
       type: enum
       options:
       - tree
@@ -37,8 +37,8 @@ properties:
           type: uuid
           foreignKey:
             schemaId: items
-            foreignKeyIdPath: "/data/[*]/itemGuid"
-            displayElementPath: "/data/[*]/name"
+            foreignKeyIdPath: /data/[*]/itemGuid
+            displayElementPath: /data/[*]/name
         - key: minCount
           type: integer
           default: 1
@@ -51,7 +51,7 @@ properties:
       - PickUp
       - Mining
     - key: miningParam
-      switch: miningType
+      switch: ./miningType
       cases:
       - when: PickUp
         type: object
@@ -69,8 +69,8 @@ properties:
               type: uuid
               foreignKey:
                 schemaId: items
-                foreignKeyIdPath: "/data/[*]/itemGuid"
-                displayElementPath: "/data/[*]/name"
+                foreignKeyIdPath: /data/[*]/itemGuid
+                displayElementPath: /data/[*]/name
             - key: damage
               type: integer
               default: 10

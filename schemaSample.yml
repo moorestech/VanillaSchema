@@ -1,5 +1,4 @@
 id: schemaSample
-# サンプル
 type: object
 isDefaultOpen: true
 properties:
@@ -15,12 +14,12 @@ properties:
     - key: name
       type: string
     - key: elementType
-      type: string
-      enum:
+      type: enum
+      options:
       - Parameter1
       - Parameter2
     - key: elementParam
-      switch: elementType
+      switch: ./elementType
       cases:
       - when: Parameter1
         type: object
@@ -38,8 +37,8 @@ properties:
           type: object
           properties:
           - key: connectOptionType
-            type: string
-            enum:
+            type: enum
+            options:
             - Type1
             - Type2
             description: TODO これは後々外部（上位スキーマ？）から設定できるようにする
@@ -64,12 +63,12 @@ properties:
                   - key: name
                     type: string
                   - key: elementType
-                    type: string
-                    enum:
+                    type: enum
+                    options:
                     - Parameter1
                     - Parameter2
                   - key: elementParam
-                    switch: elementType
+                    switch: ./elementType
                     cases:
                     - when: Parameter1
                       type: object
@@ -87,8 +86,8 @@ properties:
                         type: object
                         properties:
                         - key: connectOptionType
-                          type: string
-                          enum:
+                          type: enum
+                          options:
                           - Type1
                           - Type2
                           description: TODO これは後々外部（上位スキーマ？）から設定できるようにする
