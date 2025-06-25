@@ -10,5 +10,7 @@ properties:
     properties:
     - key: characterId
       type: string
-    - key: characterModelAddresablePath
+    - key: modelAddresablePath
+      type: string
+    - key: skitModelAddresablePath
       type: string

@@ -12,7 +12,10 @@
           "characterId": {
             "type": "string"
           },
-          "characterModelAddresablePath": {
+          "modelAddresablePath": {
+            "type": "string"
+          },
+          "skitModelAddresablePath": {
             "type": "string"
           }
         }
