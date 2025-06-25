@@ -1,0 +1,22 @@
+{
+  "$id": "characters",
+  "type": "object",
+  "isDefaultOpen": true,
+  "properties": {
+    "data": {
+      "type": "array",
+      "overrideCodeGeneratePropertyName": "CharacterMasterElement",
+      "items": {
+        "type": "object",
+        "properties": {
+          "characterId": {
+            "type": "string"
+          },
+          "characterModelAddresablePath": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  }
+}
