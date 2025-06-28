@@ -4,6 +4,7 @@ isDefaultOpen: true
 properties:
 - key: data
   type: array
+  openedByDefault: true
   overrideCodeGeneratePropertyName: ItemMasterElement
   items:
     type: object

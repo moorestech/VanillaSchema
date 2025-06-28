@@ -34,6 +34,7 @@ defineInterface:
 properties:
 - key: data
   type: array
+  openedByDefault: true
   overrideCodeGeneratePropertyName: BlockMasterElement
   items:
     type: object
