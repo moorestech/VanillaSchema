@@ -1,6 +1,5 @@
 id: craftRecipes
 type: object
-isDefaultOpen: true
 properties:
 - key: data
   type: array
@@ -29,6 +28,7 @@ properties:
       default: true
     - key: requiredItems
       type: array
+      openedByDefault: true
       items:
         type: object
         properties:
